@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Kulcs → Kód generátor</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    input { margin: 0.3rem 0; width: 150px; }
+    button { margin-top: 1rem; }
+    #code { margin-top: 1rem; font-weight: bold; color: green; }
+  </style>
+</head>
+<body>
+
+  <h1>Kulcs → Kód generátor</h1>
+
+  <label>Key 1: <input id="key1" maxlength="10"></label><br>
+  <label>Key 2: <input id="key2" maxlength="10"></label><br>
+  <label>Key 3: <input id="key3" maxlength="10"></label><br>
+
+  <button onclick="generateCode()">Kód generálása</button>
+
+  <div id="code"></div>
+
+  <script>
+    function getCharIndex(c) {
+      let count = 0;
+      while (c.toLowerCase() !== 'z') {
+        c = String.fromCharCode(c.charCodeAt(0) + 1);
+        count++;
+      }
+      return count;
+    }
+
+    function getOffsetChar(c, offset) {
+      for (let i = 0; i < offset; i++) {
+        let code = c.charCodeAt(0);
+        if (code === 122) c = 'a';         // z
+        else if (code === 90) c = 'A';     // Z
+        else if (code === 57) c = '0';     // 9
+        else c = String.fromCharCode(code + 1);
+      }
+      return c;
+    }
+
+    function getOffsetKey(key, offset) {
+      let result = '';
+      for (let i = 0; i < key.length; i++) {
+        result += getOffsetChar(key[i], offset);
+      }
+      return result;
+    }
+
+    function generateCode() {
+      const key1 = document.getElementById('key1').value;
+      const key2 = document.getElementById('key2').value;
+      const key3 = document.getElementById('key3').value;
+
+      if (key1.length < 1 || key2.length < 2 || key3.length < 3) {
+        document.getElementById('code').innerText = "Túl rövid kulcs(ok)";
+        return;
+      }
+
+      const offset1 = getCharIndex(key1[0]);
+      const offset2 = getCharIndex(key2[1]);
+      const offset3 = getCharIndex(key3[2]);
+
+      const offSetKey1 = getOffsetKey(key1, offset1);
+      const offSetKey2 = getOffsetKey(key2, offset2);
+      const offSetKey3 = getOffsetKey(key3, offset3);
+
+      const code = offSetKey1 + '-' + offSetKey2 + '-' + offSetKey3;
+
+      document.getElementById('code').innerHTML = "Generált kód: <h1>" + code + "</h1>";
+    }
+  </script>
+
+</body>
+</html>
